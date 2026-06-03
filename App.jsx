@@ -48,7 +48,6 @@ export default function App() {
       {!gameStarted && (
         <section className="start-menu">
           <h1>Quizzical</h1>
-          <p>Some description if needed</p>
           <button
             className={!isLoading && "active"}
             onClick={handleStart}
