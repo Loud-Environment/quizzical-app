@@ -2,22 +2,70 @@ import React from "react";
 import he from "he";
 import clsx from "clsx";
 
-export default function QuizForm(props) {
+export default function QuizForm({ quizOptions }) {
   const [score, setScore] = React.useState(0);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [selectedAnswers, setSelectedAnswers] = React.useState({});
+  const [quizArray, setQuizArray] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [newGameStarted, setNewGameStarted] = React.useState(false);
 
-  console.log(props.quizArray);
+  function shuffle(incorrectAnswersArray, correctAns) {
+    const newOptionsArray = [...incorrectAnswersArray];
+    const randomIndex = Math.floor(
+      Math.random() * (newOptionsArray.length + 1),
+    );
+    newOptionsArray.splice(randomIndex, 0, correctAns);
+    return newOptionsArray;
+  }
+
+  console.log(quizOptions);
+  const amount =
+    quizOptions.amount === "" ? 5 : `&amount=${quizOptions.amount}`;
+  const category =
+    quizOptions.category === "any" ? "" : `&category=${quizOptions.category}`;
+  const difficulty =
+    quizOptions.difficulty === "any"
+      ? ""
+      : `&difficulty=${quizOptions.difficulty}`;
+  const type = quizOptions.type === "any" ? "" : `&type=${quizOptions.type}`;
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    fetch(
+      quizOptions.default
+        ? "https://opentdb.com/api.php?amount=5"
+        : `https://opentdb.com/api.php?amount=${quizOptions.amount}${category}${difficulty}${type}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setQuizArray(
+          data.results.map((object, index) => ({
+            id: `question-${index + 1}`,
+            legend: object.question,
+            options: shuffle(object.incorrect_answers, object.correct_answer),
+            correctAnswer: object.correct_answer,
+          })),
+        );
+        setIsLoading(false);
+      });
+  }, [newGameStarted]);
+
+  console.log(quizArray);
+
+  function handleNewGame() {
+    setNewGameStarted((prev) => !prev);
+  }
 
   function getAnswers(formData) {
     if (isSubmitted) {
-      props.handleNewGame();
+      handleNewGame();
       setScore(0);
       setIsSubmitted(false);
       setSelectedAnswers({});
     } else {
       let userScore = 0;
-      props.quizArray.forEach((q) => {
+      quizArray.forEach((q) => {
         const userAnswer = formData.get(q.id);
 
         if (userAnswer === he.decode(q.correctAnswer)) {
@@ -36,10 +84,12 @@ export default function QuizForm(props) {
     }));
   }
 
-  return (
+  return quizArray.length < 0 ? (
+    <h1>Loading...</h1>
+  ) : (
     <section className="quiz">
       <form action={getAnswers}>
-        {props.quizArray.map((q) => (
+        {quizArray.map((q) => (
           <fieldset key={q.id}>
             <legend>{he.decode(q.legend)}</legend>
             <div>
@@ -86,7 +136,7 @@ export default function QuizForm(props) {
           <button type="submit">
             {!isSubmitted
               ? "Check answers"
-              : props.isLoading
+              : isLoading
                 ? "Loading quiz"
                 : "Play again"}
           </button>

@@ -1,46 +1,26 @@
 import QuizForm from "./components/quiz-form.jsx";
+import QuizOptions from "./components/quiz-options.jsx";
 import { useState, useEffect } from "react";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
-  const [newGameStarted, setNewGameStarted] = useState(false);
-  const [quizArray, setQuizArray] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  function shuffle(incorrectAnswersArray, correctAns) {
-    const newOptionsArray = [...incorrectAnswersArray];
-    const randomIndex = Math.floor(
-      Math.random() * (newOptionsArray.length + 1),
-    );
-    newOptionsArray.splice(randomIndex, 0, correctAns);
-    return newOptionsArray;
-  }
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetch(
-      "https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple",
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setQuizArray(
-          data.results.map((object, index) => ({
-            id: `question-${index + 1}`,
-            legend: object.question,
-            options: shuffle(object.incorrect_answers, object.correct_answer),
-            correctAnswer: object.correct_answer,
-          })),
-        );
-        setIsLoading(false);
-      });
-  }, [newGameStarted]);
+  const [quizOptions, setQuizOptions] = useState({ default: "default" });
 
   function handleStart() {
     setGameStarted((prev) => true);
   }
 
-  function handleNewGame() {
-    setNewGameStarted((prev) => !prev);
+  function getOptions(formData) {
+    const amount = formData.get("trivia_amount");
+    const category = formData.get("trivia_category");
+    const difficulty = formData.get("trivia_difficulty");
+    const type = formData.get("trivia_type");
+    setQuizOptions({
+      amount,
+      category,
+      difficulty,
+      type,
+    });
   }
 
   return (
@@ -48,41 +28,13 @@ export default function App() {
       {!gameStarted && (
         <section className="start-menu">
           <h1>Quizzical</h1>
-          <button
-            className={!isLoading && "active"}
-            onClick={handleStart}
-            disabled={isLoading}
-          >
-            {isLoading ? "Loading quiz" : "Start quiz"}
+          <QuizOptions getOptions={getOptions} />
+          <button type="submit" onClick={handleStart}>
+            Start quiz
           </button>
         </section>
       )}
-      {gameStarted && (
-        <QuizForm
-          quizArray={quizArray}
-          gameStarted={gameStarted}
-          handleNewGame={handleNewGame}
-          isLoading={isLoading}
-        />
-      )}
+      {gameStarted && <QuizForm quizOptions={quizOptions} />}
     </main>
   );
 }
-
-/* 
-  Порядок работы приложения:
-  1) Грузится интро с кнопкой, в это же время отправляется запрос API и формируется 
-  массив для рендера следующей страницы
-  2) При нажатии кнопки Start Quiz игр
-  начинается и рендерится компонент QuizForm, который получает массив вопросов и ответов
-  3) В компоненте QuizForm рендерятся вопросы и варианты ответов, пользователь выбирает ответы
-  4) При отправке формы через кнопку Check Answers вызывается функция getAnswers,
-  которая получает выбранные пользователем ответы
-  и сравнивает их с правильными ответами из массива correctAnswers, 
-  который был сохранен в состоянии App
-  5) Результаты сравнения отображаются пользователю в виде количества правильных ответов 
-  и появляется кнопка Play Again, которая при нажатии сбрасывает состояние и 
-  позволяет начать игру заново
-  6) Игра продолжается, пока пользователь не решит выйти из приложения или не закроет его
-
-*/
