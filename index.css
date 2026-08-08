@@ -223,6 +223,20 @@ button.form-submit-btn {
   font-size: 1rem;
 }
 
+.saved,
+.saved:active,
+.saved:focus,
+.saved:hover {
+  background-color: #006c2c;
+  color: #f5fff9;
+  outline: none;
+  border: 1px solid #006c2c;
+}
+
+.result-section span {
+  font-size: 1.6rem;
+}
+
 @media screen and (width < 500px) {
   body {
     padding: 30px 35px;
@@ -255,7 +269,17 @@ button.form-submit-btn {
   }
 
   form button {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     padding: 11px 22px;
+  }
+
+  .result-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .result-section span {
+    font-size: 1.3rem;
   }
 }

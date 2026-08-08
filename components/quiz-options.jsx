@@ -1,11 +1,11 @@
 import React from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-export default function QuizOptions({ getOptions }) {
+export default function QuizOptions({ handleSumbit, saved }) {
   const [optionsShown, setOptionsShown] = React.useState(false);
 
   return (
-    <form className="form-api" action={getOptions}>
+    <form className="form-api" onSubmit={handleSumbit}>
       <h2
         onClick={() => {
           setOptionsShown((prev) => !prev);
@@ -73,7 +73,11 @@ export default function QuizOptions({ getOptions }) {
             <option value="multiple">Multiple Choice</option>
             <option value="boolean">True / False</option>
           </select>
-          <button className="form-submit-btn">Save changes</button>
+          <button
+            className={saved ? "form-submit-btn saved" : "form-submit-btn"}
+          >
+            {saved ? "All saved!" : "Save changes"}
+          </button>
         </>
       ) : null}
     </form>

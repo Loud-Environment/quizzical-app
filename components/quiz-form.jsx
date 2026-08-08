@@ -1,8 +1,9 @@
 import React from "react";
 import he from "he";
 import clsx from "clsx";
+import LoadingSVG from "../images/loading.svg";
 
-export default function QuizForm({ quizOptions }) {
+export default function QuizForm({ quizOptions, setGameStarted }) {
   const [score, setScore] = React.useState(0);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [selectedAnswers, setSelectedAnswers] = React.useState({});
@@ -84,8 +85,8 @@ export default function QuizForm({ quizOptions }) {
     }));
   }
 
-  return quizArray.length < 0 ? (
-    <h1>Loading...</h1>
+  return isLoading ? (
+    <img src={LoadingSVG} />
   ) : (
     <section className="quiz">
       <form action={getAnswers}>
@@ -133,6 +134,9 @@ export default function QuizForm({ quizOptions }) {
         ))}
         <div className="result-section">
           {isSubmitted && <span>You scored {score}/5 correct answers</span>}
+          <button onClick={() => setGameStarted(false)}>
+            Return to main menu
+          </button>
           <button type="submit">
             {!isSubmitted
               ? "Check answers"
