@@ -89,7 +89,15 @@ fieldset div {
 }
 
 .radio-input {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.radio-input:focus-visible + label {
+  outline: 3px solid #232a50;
+  outline-offset: 3px;
 }
 
 .quiz form {
@@ -159,7 +167,6 @@ button {
   align-self: center;
   color: #f5f7fb;
   border-radius: 10px;
-  outline: none;
   box-shadow: none;
   cursor: pointer;
 }
@@ -177,9 +184,13 @@ form button.options-submit,
 }
 
 form button:hover,
-form button:focus,
 form button:focus {
   background-color: #232a50;
+}
+
+form button:focus-visible {
+  outline: 3px solid #232a50;
+  outline-offset: 3px;
 }
 
 .result-section {
@@ -234,7 +245,6 @@ form button:focus {
   margin-bottom: 10px;
   padding: 5px 10px;
   border-radius: 5px;
-  outline: none;
   border: 1px solid #ccc;
   line-height: 1.5;
   font-size: 0.85rem;
@@ -250,7 +260,7 @@ button.form-submit-btn {
   font-size: 1rem;
 }
 
-.result-section span {
+.result-section p {
   font-size: 1.3rem;
 }
 
@@ -280,7 +290,7 @@ button.form-submit-btn {
     flex-direction: row;
   }
 
-  .result-section span {
+  .result-section p {
     font-size: 1.6rem;
   }
 

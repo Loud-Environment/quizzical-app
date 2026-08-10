@@ -12,9 +12,6 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
   const [newGameStarted, setNewGameStarted] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState(null);
 
-  console.log(quizOptions);
-  const amount =
-    quizOptions.amount === "" ? 5 : `&amount=${quizOptions.amount}`;
   const category =
     quizOptions.category === "any" ? "" : `&category=${quizOptions.category}`;
   const difficulty =
@@ -41,7 +38,7 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
         const res = await fetch(
           !quizOptions.amount
             ? "https://opentdb.com/api.php?amount=5"
-            : `https://opentdb.com/api.php?amount=${quizOptions.amount}${category}${difficulty}${type}`,
+            : `https://opentdb.com/api.php?amount=${quizOptions.amount || 5}${category}${difficulty}${type}`,
         );
         if (!res.ok) {
           throw {
@@ -72,8 +69,6 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
 
     fetchQuiz();
   }, [newGameStarted]);
-
-  console.log(quizArray);
 
   function handleNewGame() {
     setNewGameStarted((prev) => !prev);
@@ -107,17 +102,18 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
   }
 
   return isLoading ? (
-    <img src={LoadingSVG} />
+    <img src={LoadingSVG} alt="Loading quiz" />
   ) : errorMessage ? (
-    <>
-      <h1>{errorMessage}</h1>
+    <div role="alert">
+      <h1>Something went wrong</h1>
+      <p>{errorMessage}</p>
       <button
         className="back-to-menu-btn"
         onClick={() => setGameStarted(false)}
       >
         Return to main menu
       </button>
-    </>
+    </div>
   ) : (
     <section className="quiz">
       <form action={getAnswers}>
@@ -165,9 +161,9 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
         ))}
         <div className="result-section">
           {isSubmitted && (
-            <span>
-              You scored {score}/{amountOfQuestions} correct answers
-            </span>
+            <p role="status" aria-live="polite">
+              You scored {score} out of {amountOfQuestions} correct answers.
+            </p>
           )}
           <button onClick={() => setGameStarted(false)}>
             Return to main menu

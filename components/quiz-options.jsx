@@ -12,6 +12,7 @@ export default function QuizOptions({ handleSubmit }) {
         }}
         className="options-header"
         type="button"
+        aria-expanded={optionsShown}
       >
         {!optionsShown ? "Show quiz options" : "Hide quiz options"}
         {!optionsShown ? <IoIosArrowDown /> : <IoIosArrowUp />}
