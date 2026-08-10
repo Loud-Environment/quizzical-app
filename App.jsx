@@ -5,13 +5,12 @@ import { useState, useEffect } from "react";
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [quizOptions, setQuizOptions] = useState({ default: "default" });
-  const [saved, setSaved] = useState(false);
 
   function handleStart() {
     setGameStarted((prev) => true);
   }
 
-  function handleSumbit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const amount = formData.get("trivia_amount");
@@ -24,8 +23,7 @@ export default function App() {
       difficulty,
       type,
     });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    handleStart();
   }
 
   return (
@@ -33,14 +31,7 @@ export default function App() {
       {!gameStarted && (
         <section className="start-menu">
           <h1>Quizzical</h1>
-          <QuizOptions
-            handleSumbit={handleSumbit}
-            setSaved={setSaved}
-            saved={saved}
-          />
-          <button type="submit" onClick={handleStart}>
-            Start quiz
-          </button>
+          <QuizOptions handleSubmit={handleSubmit} handleStart={handleStart} />
         </section>
       )}
       {gameStarted && (

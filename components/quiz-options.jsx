@@ -1,22 +1,25 @@
 import React from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-export default function QuizOptions({ handleSumbit, saved }) {
+export default function QuizOptions({ handleSubmit }) {
   const [optionsShown, setOptionsShown] = React.useState(false);
 
   return (
-    <form className="form-api" onSubmit={handleSumbit}>
+    <form className="form-api" onSubmit={handleSubmit}>
       <h2
         onClick={() => {
           setOptionsShown((prev) => !prev);
         }}
+        className="options-header"
       >
         {!optionsShown ? "Show Quiz options" : "Hide Quiz Options"}
         {!optionsShown ? <IoIosArrowDown /> : <IoIosArrowUp />}
       </h2>
       {optionsShown ? (
         <>
-          <label htmlFor="trivia_amount">Number of Questions (1-10)</label>
+          <label className="trivia_amount_class" htmlFor="trivia_amount">
+            Number of Questions (1-10)
+          </label>
           <input
             type="number"
             id="trivia_amount"
@@ -73,13 +76,9 @@ export default function QuizOptions({ handleSumbit, saved }) {
             <option value="multiple">Multiple Choice</option>
             <option value="boolean">True / False</option>
           </select>
-          <button
-            className={saved ? "form-submit-btn saved" : "form-submit-btn"}
-          >
-            {saved ? "All saved!" : "Save changes"}
-          </button>
         </>
       ) : null}
+      <button className="options-submit">Start quiz</button>
     </form>
   );
 }
