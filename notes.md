@@ -13,8 +13,9 @@ List of fixes to add to the app:
 6. **DONE** Add happy path — was it already there?
 7. **DONE** Add sad path to the fetch — show an error message and a "back to menu" button on failure
 8. **DONE** Check accessibility
+9. Бордер не должен завиесть от количества контента
 
-9. Add more accessibility:
-   - Announce correct/incorrect answers for screen readers
-   - aria-expanded for Show/Hide quiz options
-   - aria-controls
+10. Add more accessibility:
+    - Announce correct/incorrect answers for screen readers
+    - aria-expanded for Show/Hide quiz options
+    - aria-controls

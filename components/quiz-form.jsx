@@ -104,7 +104,7 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
   return isLoading ? (
     <img src={LoadingSVG} alt="Loading quiz" />
   ) : errorMessage ? (
-    <div role="alert">
+    <div className="error-message-container" role="alert">
       <h1>Something went wrong</h1>
       <p>{errorMessage}</p>
       <button

@@ -106,7 +106,7 @@ fieldset div {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: start;
+  align-items: stretch;
 }
 
 .quiz form fieldset legend {
@@ -266,6 +266,12 @@ button.form-submit-btn {
 
 .trivia_amount_class {
   margin-top: 20px;
+}
+
+/* Styling the error screen */
+
+.error-message-container h1 {
+  margin-bottom: 0.3em;
 }
 
 @media screen and (min-width: 500px) {
