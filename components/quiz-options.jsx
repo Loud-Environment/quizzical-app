@@ -6,15 +6,16 @@ export default function QuizOptions({ handleSubmit }) {
 
   return (
     <form className="form-api" onSubmit={handleSubmit}>
-      <h2
+      <button
         onClick={() => {
           setOptionsShown((prev) => !prev);
         }}
         className="options-header"
+        type="button"
       >
-        {!optionsShown ? "Show Quiz options" : "Hide Quiz Options"}
+        {!optionsShown ? "Show quiz options" : "Hide quiz options"}
         {!optionsShown ? <IoIosArrowDown /> : <IoIosArrowUp />}
-      </h2>
+      </button>
       {optionsShown ? (
         <>
           <label className="trivia_amount_class" htmlFor="trivia_amount">
@@ -78,7 +79,9 @@ export default function QuizOptions({ handleSubmit }) {
           </select>
         </>
       ) : null}
-      <button className="options-submit">Start quiz</button>
+      <button type="submit" className="options-submit">
+        Start quiz
+      </button>
     </form>
   );
 }

@@ -10,15 +10,7 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
   const [quizArray, setQuizArray] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [newGameStarted, setNewGameStarted] = React.useState(false);
-
-  function shuffle(incorrectAnswersArray, correctAns) {
-    const newOptionsArray = [...incorrectAnswersArray];
-    const randomIndex = Math.floor(
-      Math.random() * (newOptionsArray.length + 1),
-    );
-    newOptionsArray.splice(randomIndex, 0, correctAns);
-    return newOptionsArray;
-  }
+  const [errorMessage, setErrorMessage] = React.useState(null);
 
   console.log(quizOptions);
   const amount =
@@ -31,15 +23,34 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
       : `&difficulty=${quizOptions.difficulty}`;
   const type = quizOptions.type === "any" ? "" : `&type=${quizOptions.type}`;
 
+  const amountOfQuestions = quizOptions.amount || "5";
+
+  function shuffle(incorrectAnswersArray, correctAns) {
+    const newOptionsArray = [...incorrectAnswersArray];
+    const randomIndex = Math.floor(
+      Math.random() * (newOptionsArray.length + 1),
+    );
+    newOptionsArray.splice(randomIndex, 0, correctAns);
+    return newOptionsArray;
+  }
+
   React.useEffect(() => {
-    setIsLoading(true);
-    fetch(
-      quizOptions.default
-        ? "https://opentdb.com/api.php?amount=5"
-        : `https://opentdb.com/api.php?amount=${quizOptions.amount}${category}${difficulty}${type}`,
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    async function fetchQuiz() {
+      setIsLoading(true);
+      try {
+        const res = await fetch(
+          !quizOptions.amount
+            ? "https://opentdb.com/api.php?amount=5"
+            : `https://opentdb.com/api.php?amount=${quizOptions.amount}${category}${difficulty}${type}`,
+        );
+        if (!res.ok) {
+          throw {
+            message: "Something went wrong",
+            statusText: res.statusText,
+            status: res.status,
+          };
+        }
+        const data = await res.json();
         setQuizArray(
           data.results.map((object, index) => ({
             id: `question-${index + 1}`,
@@ -48,8 +59,18 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
             correctAnswer: object.correct_answer,
           })),
         );
+      } catch (err) {
+        if (err.status === 429) {
+          setErrorMessage("Too many attempts. Wait a little and try again.");
+        } else {
+          setErrorMessage(`Error ${err.status}. Wait a little and try again.`);
+        }
+      } finally {
         setIsLoading(false);
-      });
+      }
+    }
+
+    fetchQuiz();
   }, [newGameStarted]);
 
   console.log(quizArray);
@@ -87,6 +108,16 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
 
   return isLoading ? (
     <img src={LoadingSVG} />
+  ) : errorMessage ? (
+    <>
+      <h1>{errorMessage}</h1>
+      <button
+        className="back-to-menu-btn"
+        onClick={() => setGameStarted(false)}
+      >
+        Return to main menu
+      </button>
+    </>
   ) : (
     <section className="quiz">
       <form action={getAnswers}>
@@ -133,7 +164,11 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
           </fieldset>
         ))}
         <div className="result-section">
-          {isSubmitted && <span>You scored {score}/5 correct answers</span>}
+          {isSubmitted && (
+            <span>
+              You scored {score}/{amountOfQuestions} correct answers
+            </span>
+          )}
           <button onClick={() => setGameStarted(false)}>
             Return to main menu
           </button>

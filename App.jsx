@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
-  const [quizOptions, setQuizOptions] = useState({ default: "default" });
+  const [quizOptions, setQuizOptions] = useState({});
 
   function handleStart() {
     setGameStarted((prev) => true);
@@ -31,7 +31,7 @@ export default function App() {
       {!gameStarted && (
         <section className="start-menu">
           <h1>Quizzical</h1>
-          <QuizOptions handleSubmit={handleSubmit} handleStart={handleStart} />
+          <QuizOptions handleSubmit={handleSubmit} />
         </section>
       )}
       {gameStarted && (
