@@ -1,5 +1,5 @@
-import QuizForm from "./components/quiz-form.jsx";
-import QuizOptions from "./components/quiz-options.jsx";
+import QuizForm from "./src/components/quiz-form.jsx";
+import QuizOptions from "./src/components/quiz-options.jsx";
 import { useState, useEffect } from "react";
 
 export default function App() {
