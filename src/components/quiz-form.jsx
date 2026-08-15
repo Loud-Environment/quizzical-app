@@ -2,89 +2,19 @@ import React from "react";
 import he from "he";
 import clsx from "clsx";
 import LoadingSVG from "../../images/loading.svg";
+import useQuiz from "../hooks/useQuiz";
 
 export default function QuizForm({ quizOptions, setGameStarted }) {
   const [score, setScore] = React.useState(0);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [selectedAnswers, setSelectedAnswers] = React.useState({});
-  const [quizArray, setQuizArray] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [newGameStarted, setNewGameStarted] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(null);
-
-  const category =
-    quizOptions.category === "any" ? "" : `&category=${quizOptions.category}`;
-  const difficulty =
-    quizOptions.difficulty === "any"
-      ? ""
-      : `&difficulty=${quizOptions.difficulty}`;
-  const type = quizOptions.type === "any" ? "" : `&type=${quizOptions.type}`;
-
-  const amountOfQuestions = quizOptions.amount || "5";
-
-  function shuffle(incorrectAnswersArray, correctAns) {
-    const newOptionsArray = [...incorrectAnswersArray];
-    const randomIndex = Math.floor(
-      Math.random() * (newOptionsArray.length + 1),
-    );
-    newOptionsArray.splice(randomIndex, 0, correctAns);
-    return newOptionsArray;
-  }
-
-  console.log(
-    `https://opentdb.com/api.php?amount=${quizOptions.amount || 5}${category}${difficulty}${type}`,
-  );
-
-  React.useEffect(() => {
-    async function fetchQuiz() {
-      setIsLoading(true);
-      try {
-        const res = await fetch(
-          !quizOptions.amount
-            ? "https://opentdb.com/api.php?amount=5"
-            : `https://opentdb.com/api.php?amount=${quizOptions.amount || 5}${category}${difficulty}${type}`,
-        );
-        if (!res.ok) {
-          throw {
-            message: "Something went wrong",
-            statusText: res.statusText,
-            status: res.status,
-          };
-        }
-        const data = await res.json();
-        if (data.response_code === 1) {
-          throw {
-            message:
-              "Could not return results. The API doesn't have enough questions for your query",
-            statusText: "No Results",
-            status: 1,
-          };
-        }
-        setQuizArray(
-          data.results.map((object, index) => ({
-            id: `question-${index + 1}`,
-            legend: object.question,
-            options: shuffle(object.incorrect_answers, object.correct_answer),
-            correctAnswer: object.correct_answer,
-          })),
-        );
-      } catch (err) {
-        if (err.status === 429) {
-          setErrorMessage("Too many attempts. Wait a little and try again.");
-        } else if (err.status === 1) {
-          setErrorMessage(
-            "Please choose less questions. The API doesn't have enough questions for your quiz.",
-          );
-        } else {
-          setErrorMessage(`Error ${err.status}. Wait a little and try again.`);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchQuiz();
-  }, [newGameStarted]);
+  const {
+    quizArray,
+    isLoading,
+    newGameStarted,
+    setNewGameStarted,
+    errorMessage,
+  } = useQuiz(quizOptions);
 
   function handleNewGame() {
     setNewGameStarted((prev) => !prev);
@@ -178,7 +108,7 @@ export default function QuizForm({ quizOptions, setGameStarted }) {
         <div className="result-section">
           {isSubmitted && (
             <p role="status" aria-live="polite">
-              You scored {score} out of {amountOfQuestions} correct answers.
+              You scored {score} out of {quizOptions.amount} correct answers.
             </p>
           )}
           <button onClick={() => setGameStarted(false)}>

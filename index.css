@@ -14,7 +14,6 @@ form {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* cursor: pointer; */
 }
 
 body {
@@ -231,7 +230,6 @@ form button:focus-visible {
 }
 
 .form-api h2 {
-  /* cursor: pointer; */
   font-weight: 500;
   display: flex;
   align-items: center;

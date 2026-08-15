@@ -4,19 +4,20 @@ import { useState, useEffect } from "react";
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
-  const [quizOptions, setQuizOptions] = useState({});
+  const [quizOptions, setQuizOptions] = useState();
 
   function handleStart() {
-    setGameStarted((prev) => true);
+    setGameStarted(true);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const amount = formData.get("trivia_amount");
-    const category = formData.get("trivia_category");
-    const difficulty = formData.get("trivia_difficulty");
-    const type = formData.get("trivia_type");
+    const amount = Number(formData.get("trivia_amount")) || 5;
+    const category = formData.get("trivia_category") || "any";
+    const difficulty = formData.get("trivia_difficulty") || "any";
+    const type = formData.get("trivia_type") || "any";
+
     setQuizOptions({
       amount,
       category,
